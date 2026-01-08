@@ -5,7 +5,7 @@
 
 // make all functions recursive, no loops
 
-void printArray(int * arr, int len, int i) {
+void printArrayRecursive(int * arr, int len, int i) {
     if(len <= 0) {
         return;
     }
@@ -14,12 +14,16 @@ void printArray(int * arr, int len, int i) {
     }
     else if(i == 0) {
         printf("[ %d", arr[i]);
-        printArray(arr, len, i + 1);
+        printArrayRecursive(arr, len, i + 1);
     }
     else {
         printf(", %d", arr[i]);
-        printArray(arr, len, i + 1);
+        printArrayRecursive(arr, len, i + 1);
     }
+}
+
+void printArray(int * arr, int len) {
+    printArrayRecursive(arr, len, 0);
 }
 
 /*
@@ -32,7 +36,7 @@ void printArray(int * arr, int len, int i) {
 */
 
 // cycle first element to the end n times, starting swapping with element i
-void cycle(int arr[], int len, int i, int n) {
+void cycleRecursive(int arr[], int len, int n, int i) {
     if(n > 0) {
         if(i < len - 1) {
             // j is previous item, looping back to end
@@ -42,13 +46,17 @@ void cycle(int arr[], int len, int i, int n) {
             arr[i] = arr[j];
             arr[j] = arri;
             // swap next 2
-            cycle(arr, len, i + 1, n);
+            cycleRecursive(arr, len, i + 1, n);
         }
         else {
             // we finished swapping, so start a new cycle
-            cycle(arr, len, 0, n - 1);
+            cycleRecursive(arr, len, 0, n - 1);
         }
     }
+}
+
+void cycle(int arr[], int len, int n) {
+    cycleRecursive(arr, len, n, 0);
 }
 
 bool isPrimeRecursive(int n, int i) {
@@ -96,23 +104,66 @@ int * Select(int arr[], int len, int * outLen, bool (*f)(int)) {
     return out;
 }
 
+// make an array 2D
+void makeArray2D(int * * array, rows, cols, i) {
+    if(i < rows) {
+        array[i] = array[0] + i * cols;
+        array2D(array, rows, cols, i + 1);
+    }
+}
+
+// Write a function that converts an array of pairs into an array of arrays, preserving the order of the
+// elements. For example, convert [[1,2], [3,4], [5,6]] should generate [[1,3,5], [2,4,6]].
+
+int * * convert(int pairs[][], int len) {
+    /*
+    rows 
+     |
+     v -> columns
+    [] -> [ 1, 2, 3, 4 ]
+    [] -> [ 4, 5, 6, 7 ]
+    [] -> ...
+    ...
+    arr[row][col]
+    */
+    
+    // set up array array
+    int rows = 2; // we are always receiving pairs, so our output will be a pair of arrays
+    int cols = len;
+    
+    int * * array = malloc(rows * sizeof(int *));
+	array[0] = malloc(rows * cols * sizeof(int));
+	makeArray2D(array, rows, cols, 1);
+	
+	// we now have an array that's like arr[2][len]
+	// we want to go from arr[len][2] to arr[len][2]
+	
+	// ...
+}
+
+void freeArrArr(int * * arr) {
+    free(arr[0]);
+    free(arr);
+}
+
 int main() {
-    int arr[] = { 1, 2, 3, 4, 5, 6 };
+    int arr[] = { 1, 2, 3, 4, 5, 6, 7 };
+    int len = 7;
 
     printf("Starting array:\n");
-    printArray(arr, 6, 0);
+    printArray(arr, len);
     printf("Cycle array 3 times:\n");
-    cycle(arr, 6, 0, 3);
-    printArray(arr, 6, 0);
+    cycle(arr, len, 3);
+    printArray(arr, len);
 
     printf("Is 4 prime? %s\n", isPrime(4) ? "Yes." : "No");
     printf("Is 7907 prime? %s\n", isPrime(7907) ? "Yes." : "No");
     printf("Is 7906 prime? %s\n", isPrime(7906) ? "Yes." : "No");
     
     int primeCount = 0;
-    int * primes = Select(arr, 6, &primeCount, isPrime);
+    int * primes = Select(arr, len, &primeCount, isPrime);
     printf("%d primes in array:\n", primeCount);
-    printArray(primes, primeCount, 0);
+    printArray(primes, primeCount);
     free(primes);
 
     return 0;
