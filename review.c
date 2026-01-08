@@ -26,6 +26,17 @@ void printArray(int * arr, int len) {
     printArrayRecursive(arr, len, 0);
 }
 
+void printArrayArrayRecursive(int * * arr, int rows, int cols, int i) {
+    if(i < rows) {
+        printArray(arr[i], cols);
+        printArrayArrayRecursive(arr, rows, cols, i + 1);
+    }
+}
+
+void printArrayArray(int * * arr, int rows, int cols) {
+    printArrayArrayRecursive(arr, rows, cols, 0);
+}
+
 /*
 
 [ 1, 2, 3, 4 ] 
@@ -136,11 +147,19 @@ int * * convert(int * * pairs, int len) {
 	makeArray2D(array, rows, cols, 1);
 	
 	// we now have an array that's like arr[2][len]
-	// we want to go from arr[len][2] to arr[len][2]
+	// we want to go from arr[len][2] to arr[2][len]
 	
 	// ...
+	for(int i = 0; i < rows; i ++) {
+	    for(int j = 0; j < cols; j ++) {
+	        array[i][j] = pairs[j][i];
+	    }
+	}
+	
+	return array;
 }
 
+// to free result of convert
 void freeArrArr(int * * arr) {
     free(arr[0]);
     free(arr);
@@ -165,6 +184,29 @@ int main() {
     printf("%d primes in array:\n", primeCount);
     printArray(primes, primeCount);
     free(primes);
+    
+    // we can't do int pairs[3][2], since that can't be passed to the functions
+    int * pairs[3];
+    
+    int r0[] = { 1, 2 };
+    int r1[] = { 3, 4 };
+    int r2[] = { 5, 6 };
+    
+    pairs[0] = r0;
+    pairs[1] = r1;
+    pairs[2] = r2;
+    
+    
+    int rows = 3;
+    int cols = 2;
+    
+    printf("Array of pairs:\n");
+    printArrayArray(pairs, rows, cols);
+    
+    printf("Converted pair of arrays:\n");
+    int ** converted = convert(pairs, rows);
+    printArrayArray(converted, cols, rows);
+    freeArrArr(converted);
 
     return 0;
 }
