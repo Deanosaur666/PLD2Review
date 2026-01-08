@@ -26,14 +26,14 @@ void printArray(int * arr, int len) {
     printArrayRecursive(arr, len, 0);
 }
 
-void printArrayArrayRecursive(int * * arr, int rows, int cols, int i) {
+void printArrayArrayRecursive(int ** arr, int rows, int cols, int i) {
     if(i < rows) {
         printArray(arr[i], cols);
         printArrayArrayRecursive(arr, rows, cols, i + 1);
     }
 }
 
-void printArrayArray(int * * arr, int rows, int cols) {
+void printArrayArray(int ** arr, int rows, int cols) {
     printArrayArrayRecursive(arr, rows, cols, 0);
 }
 
@@ -123,10 +123,19 @@ void makeArray2D(int * * array, int rows, int cols, int i) {
     }
 }
 
+void swapRowColumns(int ** dest, int ** source, int rows, int columns, int r, int c) {
+    if(c < columns) {
+        dest[r][c] = source[c][r];
+        swapRowColumns(dest, source, rows, columns, r, c + 1);
+    }
+    else if(r < rows) {
+        swapRowColumns(dest, source, rows, columns, r + 1, 0);
+    }
+}
+
 // Write a function that converts an array of pairs into an array of arrays, preserving the order of the
 // elements. For example, convert [[1,2], [3,4], [5,6]] should generate [[1,3,5], [2,4,6]].
-
-int * * convert(int * * pairs, int len) {
+int ** convert(int ** pairs, int len) {
     /*
     rows 
      |
@@ -142,15 +151,16 @@ int * * convert(int * * pairs, int len) {
     int rows = 2; // we are always receiving pairs, so our output will be a pair of arrays
     int cols = len;
     
-    int * * array = malloc(rows * sizeof(int *));
+    int ** array = malloc(rows * sizeof(int *));
 	array[0] = malloc(rows * cols * sizeof(int));
 	makeArray2D(array, rows, cols, 1);
 	
 	// we now have an array that's like arr[2][len]
 	// we want to go from arr[len][2] to arr[2][len]
 	
-	// ...
-	for(int i = 0; i < rows; i ++) {
+	// convert to recursive
+	swapRowColumns(array, pairs, rows, cols, 0, 0);
+	for(int i = 0; i < rows && false; i ++) {
 	    for(int j = 0; j < cols; j ++) {
 	        array[i][j] = pairs[j][i];
 	    }
@@ -160,7 +170,7 @@ int * * convert(int * * pairs, int len) {
 }
 
 // to free result of convert
-void freeArrArr(int * * arr) {
+void freeArrArr(int ** arr) {
     free(arr[0]);
     free(arr);
 }
