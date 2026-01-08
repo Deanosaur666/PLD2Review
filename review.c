@@ -105,17 +105,17 @@ int * Select(int arr[], int len, int * outLen, bool (*f)(int)) {
 }
 
 // make an array 2D
-void makeArray2D(int * * array, rows, cols, i) {
+void makeArray2D(int * * array, int rows, int cols, int i) {
     if(i < rows) {
         array[i] = array[0] + i * cols;
-        array2D(array, rows, cols, i + 1);
+        makeArray2D(array, rows, cols, i + 1);
     }
 }
 
 // Write a function that converts an array of pairs into an array of arrays, preserving the order of the
 // elements. For example, convert [[1,2], [3,4], [5,6]] should generate [[1,3,5], [2,4,6]].
 
-int * * convert(int pairs[][], int len) {
+int * * convert(int * * pairs, int len) {
     /*
     rows 
      |
