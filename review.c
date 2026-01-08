@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 // make all functions recursive, no loops
 
-void printArray(int arr[], int len, int i) {
+void printArray(int * arr, int len, int i) {
     if(len <= 0) {
         return;
     }
@@ -65,11 +66,34 @@ bool isPrimeRecursive(int n, int i) {
 }
 
 bool isPrime(int n) {
-    return isPrimeRecursive(n, 2);
+    if(n <= 1)
+        return false;
+    else
+        return isPrimeRecursive(n, 2);
 }
 
-int * select(int arr[], int len, bool (*f)(int)) {
+void selectRecursive(int in[], int inLen, int out[], int * outLen, int i, bool (*f)(int)) {
+    if(i < inLen) {
+        bool select = f(in[i]);
+        if(select) {
+            out[*outLen] = in[i];
+            (*outLen) = *outLen + 1;
+        }
+        selectRecursive(in, inLen, out, outLen, i + 1, f);
+    }
+}
 
+// lowercasse select has a name conflict for some reason
+// remember to free returned value
+int * Select(int arr[], int len, int * outLen, bool (*f)(int)) {
+    int outArr[len]; // oversized
+    *outLen = 0;
+    selectRecursive(arr, len, outArr, outLen, 0, f);
+    
+    int * out = (int *)malloc(*outLen * sizeof(int));
+    memcpy(out, outArr, *outLen * sizeof(int));
+    
+    return out;
 }
 
 int main() {
@@ -81,7 +105,15 @@ int main() {
     cycle(arr, 6, 0, 3);
     printArray(arr, 6, 0);
 
-    //printf("Is 7 prime? %s")
+    printf("Is 4 prime? %s\n", isPrime(4) ? "Yes." : "No");
+    printf("Is 7907 prime? %s\n", isPrime(7907) ? "Yes." : "No");
+    printf("Is 7906 prime? %s\n", isPrime(7906) ? "Yes." : "No");
+    
+    int primeCount = 0;
+    int * primes = Select(arr, 6, &primeCount, isPrime);
+    printf("%d primes in array:\n", primeCount);
+    printArray(primes, primeCount, 0);
+    free(primes);
 
     return 0;
 }
