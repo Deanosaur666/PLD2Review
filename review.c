@@ -3,8 +3,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-// make all functions recursive, no loops
+// No loops are used. Recursive functions are used in place of loops
 
+// I'm not bothering with an h file or forward declarations,
+// so order of some stuff may look odd
+// oh well
+
+// ==========================
+// print functions for output
+// ==========================
+
+// recursive version is called by main version, so regular
+// printing doesn't need to provide i of 0
 void printArrayRecursive(int * arr, int len, int i) {
     if(len <= 0) {
         return;
@@ -37,6 +47,14 @@ void printArrayArray(int ** arr, int rows, int cols) {
     printArrayArrayRecursive(arr, rows, cols, 0);
 }
 
+
+/*
+==========================
+1. Write a function cycle that takes an array and an integer n as
+input and cycles the first element of the list to the end n times.
+==========================
+*/
+
 /*
 
 [ 1, 2, 3, 4 ] 
@@ -57,11 +75,11 @@ void cycleRecursive(int arr[], int len, int n, int i) {
             arr[i] = arr[j];
             arr[j] = arri;
             // swap next 2
-            cycleRecursive(arr, len, i + 1, n);
+            cycleRecursive(arr, len, n, i + 1);
         }
         else {
             // we finished swapping, so start a new cycle
-            cycleRecursive(arr, len, 0, n - 1);
+            cycleRecursive(arr, len, n - 1, 0);
         }
     }
 }
@@ -69,6 +87,13 @@ void cycleRecursive(int arr[], int len, int n, int i) {
 void cycle(int arr[], int len, int n) {
     cycleRecursive(arr, len, n, 0);
 }
+
+/*
+==========================
+2. Write a function isPrime that returns true if and only if its integer
+parameter is a prime number.
+==========================
+*/
 
 bool isPrimeRecursive(int n, int i) {
     // once we reach our target
@@ -90,6 +115,16 @@ bool isPrime(int n) {
     else
         return isPrimeRecursive(n, 2);
 }
+
+/*
+==========================
+3. Write a function select that takes an array and a function f as a parameter.
+Your function should apply f to each element of the array and should return a
+new array containing only those elements of the original list for which f
+returned true. For example, evaluating select ([1,2,3,4,5,6,7], is Prime)
+should return [2,3,5,7].
+==========================
+*/
 
 void selectRecursive(int in[], int inLen, int out[], int * outLen, int i, bool (*f)(int)) {
     if(i < inLen) {
@@ -115,6 +150,14 @@ int * Select(int arr[], int len, int * outLen, bool (*f)(int)) {
     return out;
 }
 
+/*
+==========================
+4. Write a function that converts an array of pairs into an array of arrays,
+preserving the order of the elements. For example,
+convert [[1,2], [3,4], [5,6]] should generate [[1,3,5], [2,4,6]].
+==========================
+*/
+
 // make an array 2D
 void makeArray2D(int * * array, int rows, int cols, int i) {
     if(i < rows) {
@@ -135,8 +178,6 @@ void swapRowColumns(int ** dest, int ** source, int rows, int columns, int r, in
     }
 }
 
-// Write a function that converts an array of pairs into an array of arrays, preserving the order of the
-// elements. For example, convert [[1,2], [3,4], [5,6]] should generate [[1,3,5], [2,4,6]].
 int ** convert(int ** pairs, int len) {
     /*
     rows 
@@ -173,12 +214,17 @@ void freeArrArr(int ** arr) {
 }
 
 /*
-A binary search tree (BST) is a binary tree with special properties. It may be Empty. It may be a Node
-(represented as a structure) containing a left subtree, a data item x, and a right subtree. In this case all
-the data items in the tree are different, all the items in the left subtree are smaller than x, all the items in
-the right subtree are greater than x, and the left and right subtrees arc also binary search trees. Write a
-function makeBST that converts an array of integers into a BST. The tree need not be balanced. You
-may assume that no item in the array is repeated.
+==========================
+5. A binary search tree (BST) is a binary tree with special properties.
+It may be Empty. It may be a Node (represented as a structure) containing
+a left subtree, a data item x, and a right subtree. In this case all
+the data items in the tree are different, all the items in the left
+subtree are smaller than x, all the items in the right subtree are
+greater than x, and the left and right subtrees arc also binary search
+trees. Write a function makeBST that converts an array of integers into
+a BST. The tree need not be balanced. You may assume that no item in the
+array is repeated.
+==========================
 */
 
 typedef struct BST {
@@ -187,24 +233,49 @@ typedef struct BST {
     struct BST * right;
 } BST;
 
-BST * makeBST(int * arr, int len, int i) {
-    if(i < len) {
-        BST * bst = (BST *)malloc(sizeof(BST));
-        bst->left = NULL;
-        bst->right = NULL;
-        bst->val = arr[i];
-        BST * child = makeBST(arr, len, i + 1);
-        if(child != NULL) {
-            if(child->val < bst->val)
-                bst->left = child;
-            else
-                bst->right = child;
+void BSTInsert(BST * bst, int n) {
+    if(n > bst->val) {
+        if(bst->right == NULL) {
+            BST * right = (BST *)malloc(sizeof(BST));
+            right->val = n;
+            right->left = NULL;
+            right->right = NULL;
+            bst->right = right;
         }
-        return bst;
+        else {
+            BSTInsert(bst->right, n);
+        }
     }
     else {
-        return NULL;
+        if(bst->left == NULL) {
+            BST * left = (BST *)malloc(sizeof(BST));
+            left->val = n;
+            left->left = NULL;
+            left->right = NULL;
+            bst->left = left;
+        }
+        else {
+            BSTInsert(bst->left, n);
+        }
     }
+}
+
+void makeBSTRecursive(BST * bst, int * arr, int len, int i) {
+    if(i < len) {
+        BSTInsert(bst, arr[i]);
+        makeBSTRecursive(bst, arr, len, i + 1);
+    }
+}
+
+BST * makeBST(int * arr, int len) {
+    BST * bst = (BST *)malloc(sizeof(BST));
+    bst->left = NULL;
+    bst->right = NULL;
+    bst->val = arr[0];
+
+    makeBSTRecursive(bst, arr, len, 1);
+
+    return bst;
 }
 
 void freeBST(BST * bst) {
@@ -230,7 +301,7 @@ int BSTCount(BST * bst) {
     if(bst == NULL) 
         return 0;
     else
-        return BSTCount(bst->left, bst->right) + 1;
+        return BSTCount(bst->left) + BSTCount(bst->right) + 1;
 }
 
 void BSTBFS(int * out, int i, BST * bst) {
@@ -238,8 +309,56 @@ void BSTBFS(int * out, int i, BST * bst) {
     
 }
 
+char * BSTString(BST * bst) {
+    if(bst == NULL)
+        return NULL;
+    int count = BSTCount(bst);
+    char * buffer = (char *)malloc(20 * count * sizeof(char));
+    char * left = BSTString(bst->left);
+    char * right = BSTString(bst->right);
+
+    // min size is 14
+    sprintf(buffer, "(V:%d L:%s R:%s)", bst->val, left == NULL ? "X" : left, right == NULL ? "X" : right);
+    free(left);
+    free(right);
+
+    return buffer;
+}
+
+void printBST(BST * bst) {
+    char * str = BSTString(bst);
+    printf("%s\n", str);
+    free(str);
+}
+
+/*
+==========================
+6. Write a function searchBST that searches a BST for a given data element.
+You should not search every node in the tree, but only those nodes that,
+according to the definition, might contain the element you are looking for.
+==========================
+*/
+
+bool searchBST(BST * bst, int n) {
+    if(bst == NULL)
+        return false;
+    else if(n == bst->val)
+        return true;
+    else if(n < bst->val)
+        return searchBST(bst->left, n);
+    else if(n > bst-> val)
+        return searchBST(bst->right, n);
+}
+
+/*
+==========================
+main function
+==========================
+*/
 
 int main() {
+    
+    // 1. cycle
     int arr[] = { 1, 2, 3, 4, 5, 6, 7 };
     int len = 7;
 
@@ -249,16 +368,19 @@ int main() {
     cycle(arr, len, 3);
     printArray(arr, len);
 
+    // 2. isPrime
     printf("Is 4 prime? %s\n", isPrime(4) ? "Yes." : "No");
     printf("Is 7907 prime? %s\n", isPrime(7907) ? "Yes." : "No");
     printf("Is 7906 prime? %s\n", isPrime(7906) ? "Yes." : "No");
     
+    // 3. select
     int primeCount = 0;
     int * primes = Select(arr, len, &primeCount, isPrime);
     printf("%d primes in array:\n", primeCount);
     printArray(primes, primeCount);
     free(primes);
     
+    // 4. convert
     // we can't do int pairs[3][2], since that can't be passed to the functions
     int * pairs[3];
     
@@ -270,7 +392,6 @@ int main() {
     pairs[1] = r1;
     pairs[2] = r2;
     
-    
     int rows = 3;
     int cols = 2;
     
@@ -281,6 +402,23 @@ int main() {
     int ** converted = convert(pairs, rows);
     printArrayArray(converted, cols, rows);
     freeArrArr(converted);
+
+    // 5. makeBST
+    printf("Array to convert to BST:\n");
+    int arr2[] = { 7, 1, 9, -1, 3, 10, 8 };
+    int len2 = 7;
+    printArray(arr2, len2);
+
+    printf("BST of array:\n");
+    BST * bst = makeBST(arr2, len2);
+    printBST(bst);
+
+    // 6. searchBST
+    printf("Is 9 in the BST? %s\n", searchBST(bst, 9) ? "Yes." : "No");
+    printf("Is -1 in the BST? %s\n", searchBST(bst, -1) ? "Yes." : "No");
+    printf("Is 10 in the BST? %s\n", searchBST(bst, 10) ? "Yes." : "No");
+    printf("Is 4 in the BST? %s\n", searchBST(bst, 4) ? "Yes." : "No");
+    printf("Is -2 in the BST? %s\n", searchBST(bst, -2) ? "Yes." : "No");
 
     return 0;
 }
