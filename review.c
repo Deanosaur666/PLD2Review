@@ -124,12 +124,14 @@ void makeArray2D(int * * array, int rows, int cols, int i) {
 }
 
 void swapRowColumns(int ** dest, int ** source, int rows, int columns, int r, int c) {
-    if(c < columns) {
-        dest[r][c] = source[c][r];
-        swapRowColumns(dest, source, rows, columns, r, c + 1);
-    }
-    else if(r < rows) {
-        swapRowColumns(dest, source, rows, columns, r + 1, 0);
+    if(r < rows) {
+        if(c < columns) {
+            dest[r][c] = source[c][r];
+            swapRowColumns(dest, source, rows, columns, r, c + 1);
+        }
+        else {
+            swapRowColumns(dest, source, rows, columns, r + 1, 0);
+        }
     }
 }
 
@@ -158,13 +160,8 @@ int ** convert(int ** pairs, int len) {
 	// we now have an array that's like arr[2][len]
 	// we want to go from arr[len][2] to arr[2][len]
 	
-	// convert to recursive
+	// recursive swapping function
 	swapRowColumns(array, pairs, rows, cols, 0, 0);
-	for(int i = 0; i < rows && false; i ++) {
-	    for(int j = 0; j < cols; j ++) {
-	        array[i][j] = pairs[j][i];
-	    }
-	}
 	
 	return array;
 }
