@@ -172,6 +172,73 @@ void freeArrArr(int ** arr) {
     free(arr);
 }
 
+/*
+A binary search tree (BST) is a binary tree with special properties. It may be Empty. It may be a Node
+(represented as a structure) containing a left subtree, a data item x, and a right subtree. In this case all
+the data items in the tree are different, all the items in the left subtree are smaller than x, all the items in
+the right subtree are greater than x, and the left and right subtrees arc also binary search trees. Write a
+function makeBST that converts an array of integers into a BST. The tree need not be balanced. You
+may assume that no item in the array is repeated.
+*/
+
+typedef struct BST {
+    int val;
+    struct BST * left;
+    struct BST * right;
+} BST;
+
+BST * makeBST(int * arr, int len, int i) {
+    if(i < len) {
+        BST * bst = (BST *)malloc(sizeof(BST));
+        bst->left = NULL;
+        bst->right = NULL;
+        bst->val = arr[i];
+        BST * child = makeBST(arr, len, i + 1);
+        if(child != NULL) {
+            if(child->val < bst->val)
+                bst->left = child;
+            else
+                bst->right = child;
+        }
+        return bst;
+    }
+    else {
+        return NULL;
+    }
+}
+
+void freeBST(BST * bst) {
+    if(bst != NULL) {
+        freeBST(bst->left);
+        freeBST(bst->right);
+        free(bst);
+    }
+}
+
+int BSTDepth(BST * bst) {
+    if(bst == NULL)
+        return 0;
+    else {
+        int left = BSTDepth(bst->left) + 1;
+        int right = BSTDepth(bst->right) + 1;
+        
+        return left > right ? left : right;
+    }
+}
+
+int BSTCount(BST * bst) {
+    if(bst == NULL) 
+        return 0;
+    else
+        return BSTCount(bst->left, bst->right) + 1;
+}
+
+void BSTBFS(int * out, int i, BST * bst) {
+    // need to find a way to print a BST
+    
+}
+
+
 int main() {
     int arr[] = { 1, 2, 3, 4, 5, 6, 7 };
     int len = 7;
