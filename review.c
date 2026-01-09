@@ -309,6 +309,8 @@ void BSTBFS(int * out, int i, BST * bst) {
     
 }
 
+// it would be nice to have prettier BST output, but that's hard
+// what is printed is still interpretable
 char * BSTString(BST * bst) {
     if(bst == NULL)
         return NULL;
